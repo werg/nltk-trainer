@@ -87,6 +87,8 @@ feat_group.add_argument('--filter-stopwords', default='no',
 	help='language stopwords to filter, defaults to "no" to keep stopwords')
 feat_group.add_argument('--punctuation', action='store_true', default=False,
 	help="don't strip punctuation")
+feat_group.add_argument('--senior', 
+	help='name of a senior classifier .pickle file (in nltk_data directory)')
 
 score_group = parser.add_argument_group('Feature Scoring',
 	'The default is no scoring, all words are included as features')
@@ -187,7 +189,7 @@ else:
 	stopset = set(stopwords.words(args.filter_stopwords))
 
 if not args.punctuation:
-	stopset |= set(string.punctuation)
+	stopset ||= set(string.punctuation)
 
 def norm_words(words):
 	if not args.no_lowercase:
@@ -231,6 +233,15 @@ if args.min_score or args.max_feats:
 		print '%d words meet min_score and/or max_feats' % len(bestwords)
 else:
 	featx = bag_of_words
+	
+if args.senior:
+	senior = nltk.data.load("classifiers/" + args.senior)
+	def senior_featx(words):
+		feats = featx(words)
+		feats.update({"$$$" + senior.classify(feats) : True})
+		return feats
+		
+	featx = senior_featx
 
 #####################
 ## text extraction ##
@@ -274,6 +285,8 @@ else:
 		
 		train_feats.extend(ltrain_feats)
 		test_feats.extend(ltest_feats)
+		
+	
 	
 if args.trace:
 	print '%d training feats, %d testing feats' % (len(train_feats), len(test_feats))
