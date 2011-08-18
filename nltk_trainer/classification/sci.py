@@ -1,6 +1,6 @@
 import scipy.sparse
 from scikits.learn.base import BaseEstimator
-from scikits.learn.feature_extraction.text.dense import BaseCountVectorizer
+from scikits.learn.feature_extraction.text import CountVectorizer
 from scikits.learn.svm.sparse import LinearSVC
 from scikits.learn.pipeline import Pipeline
 from nltk.classify import ClassifierI
@@ -12,12 +12,13 @@ class BagOfWordsAnalyzer(BaseEstimator):
 
 BOWAnalyzer = BagOfWordsAnalyzer()
 
-class BagOfWordsVectorizer(BaseCountVectorizer):
-	def __init__(self, analyzer=BOWAnalyzer, max_df=None):
-		BaseCountVectorizer.__init__(self, analyzer=analyzer, max_df=max_df)
+class BagOfWordsVectorizer(CountVectorizer):
+	def __init__(self, analyzer=BOWAnalyzer, max_df=1.0):
+		CountVectorizer.__init__(self, analyzer=analyzer, max_df=max_df)
 	
-	def _term_count_dicts_to_matrix(self, term_count_dicts, vocabulary):
+	def _term_count_dicts_to_matrix(self, term_count_dicts):
 		i_indices, j_indices, values = [], [], []
+		vocabulary = self.vocabulary
 		
 		for i, term_count_dict in enumerate(term_count_dicts):
 			for term in term_count_dict.iterkeys(): # ignore counts
