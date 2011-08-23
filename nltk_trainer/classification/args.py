@@ -3,11 +3,11 @@ from nltk_trainer.classification.multi import AvgProbClassifier
 
 classifier_choices = ['NaiveBayes', 'DecisionTree', 'Maxent'] + MaxentClassifier.ALGORITHMS
 
-#try:
-from .sci import ScikitsClassifier
-classifier_choices.append('Scikits')
-#except ImportError:
-#	pass
+try:
+	from .sci import ScikitsClassifier
+	classifier_choices.append('Scikits')
+except ImportError:
+	pass
 
 def add_maxent_args(parser):
 	maxent_group = parser.add_argument_group('Maxent Classifier',
