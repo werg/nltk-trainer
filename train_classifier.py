@@ -235,10 +235,11 @@ else:
 	featx = bag_of_words
 	
 if args.senior:
+	featx_junior = featx
 	senior = nltk.data.load("classifiers/" + args.senior)
 	def senior_featx(words):
-		feats = featx(words)
-		feats.update({"$$$" + senior.classify(feats) : True})
+		feats = featx_junior(words)
+		feats.update({"$$$Seniorclass" + senior.classify(feats) : True})
 		return feats
 		
 	featx = senior_featx
@@ -353,7 +354,11 @@ if not args.no_pickle and not args.cross_fold:
 	if args.filename:
 		fname = os.path.expanduser(args.filename)
 	else:
-		name = '%s_%s.pickle' % (args.corpus, '_'.join(args.classifier))
+		if args.cat_file:
+			cf = "_" + args.cat_file
+		else:
+			cf = ""
+		name = '%s_%s%s.pickle' % (args.corpus, '_'.join(args.classifier), cf)
 		fname = os.path.join(os.path.expanduser('~/nltk_data/classifiers'), name)
 	
 	dump_object(classifier, fname, trace=args.trace)
