@@ -239,7 +239,7 @@ if args.senior:
 	senior = nltk.data.load("classifiers/" + args.senior)
 	def senior_featx(words):
 		feats = featx_junior(words)
-		feats.update({"$$$Seniorclass" + senior.classify(feats) : True})
+		feats.update({"senior_class_" + senior.classify(feats) : True})
 		return feats
 		
 	featx = senior_featx
