@@ -1,7 +1,8 @@
 from nltk.classify import DecisionTreeClassifier, MaxentClassifier, NaiveBayesClassifier
 from nltk_trainer.classification.multi import AvgProbClassifier
+from .gpibox import GPIClassifier
 
-classifier_choices = ['NaiveBayes', 'DecisionTree', 'Maxent'] + MaxentClassifier.ALGORITHMS
+classifier_choices = ['NaiveBayes', 'DecisionTree', 'Maxent', 'GPIBox'] + MaxentClassifier.ALGORITHMS
 
 try:
 	from .sci import ScikitsClassifier
@@ -30,6 +31,12 @@ def add_decision_tree_args(parser):
 	decisiontree_group.add_argument('--support_cutoff', default=10, type=int,
 		help='default is 10')
 
+def add_gpibox_args(parser):
+	gpi_group = parser.add_argument_group('Google Priority Inbox imitation Classifier',
+		'These options only apply when the GPIBox classifier is chosen')
+	gpi_group.add_argument('--aggressiveness', default=0.05, type=float, help='default is 0.05')
+	gpi_group.add_argument('--passivity', default=0.2, type=float, help='default is 0.05')
+
 def make_classifier_builder(args):
 	if isinstance(args.classifier, basestring):
 		algos = [args.classifier]
@@ -56,6 +63,10 @@ def make_classifier_builder(args):
 			classifier_train = NaiveBayesClassifier.train
 		elif algo == 'Scikits':
 			classifier_train = ScikitsClassifier.train
+		elif algo == 'GPIBox':
+			classifier_train_kwargs['aggressiveness'] = args.aggressiveness
+			classifier_train_kwargs['passivity'] = args.passivity
+			classifier_train = GPIClassifier.train
 		else:
 			if algo != 'Maxent':
 				classifier_train_kwargs['algorithm'] = algo
