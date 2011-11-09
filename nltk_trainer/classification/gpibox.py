@@ -10,9 +10,10 @@ def zero():
 	return 0
 
 class GPIClassifier(ClassifierI):
-	def __init__(self, w, target_names):
+	def __init__(self, w, target_names, senior = None):
 		self.w = w
 		self.target_names = target_names
+		self.senior = senior
 	
 	def labels(self):
 		return self.target_names
@@ -22,6 +23,10 @@ class GPIClassifier(ClassifierI):
 		for token in featureset.iterkeys():
 			s += self.w[token]
 			
+		if self.senior:
+			for token in featureset.iterkeys():
+				s += self.senior[token]
+			
 		return 1.0/(1.0 + math.exp(-s))
 		
 	def classify(self, featureset):
@@ -29,7 +34,7 @@ class GPIClassifier(ClassifierI):
 		return self.target_names[int(round(s))]
 	
 	@classmethod
-	def train(cls, labeled_featuresets, aggressiveness, passivity):
+	def train(cls, labeled_featuresets, aggressiveness, passivity, senior = None):
 		
 		target_names =  set([])
 		random.shuffle(labeled_featuresets)
@@ -43,7 +48,7 @@ class GPIClassifier(ClassifierI):
 		
 		w = collections.defaultdict(zero)
 		
-		scl = cls(w, target_names)
+		scl = cls(w, target_names, senior)
 		
 		for (featureset, label) in labeled_featuresets:
 			o = scl.classify_numerical(featureset)

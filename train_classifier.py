@@ -234,8 +234,9 @@ if args.min_score or args.max_feats:
 		print '%d words meet min_score and/or max_feats' % len(bestwords)
 else:
 	featx = bag_of_words
-	
-if args.senior:
+
+
+if args.senior and (not "GPIBox" in args.classifier or not "GPIBox" in args.senior):
 	featx_junior = featx
 	senior = nltk.data.load("classifiers/" + args.senior)
 	def senior_featx(words):
@@ -359,6 +360,9 @@ if not args.no_pickle and not args.cross_fold:
 			cf = "_" + args.cat_file
 		else:
 			cf = ""
+		if args.senior:
+			cf += "senior_" + args.senior
+			
 		name = '%s_%s%s.pickle' % (args.corpus, '_'.join(args.classifier), cf)
 		fname = os.path.join(os.path.expanduser('~/nltk_data/classifiers'), name)
 	

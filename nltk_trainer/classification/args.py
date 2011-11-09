@@ -1,6 +1,7 @@
 from nltk.classify import DecisionTreeClassifier, MaxentClassifier, NaiveBayesClassifier
 from nltk_trainer.classification.multi import AvgProbClassifier
 from .gpibox import GPIClassifier
+import nltk.data
 
 classifier_choices = ['NaiveBayes', 'DecisionTree', 'Maxent', 'GPIBox'] + MaxentClassifier.ALGORITHMS
 
@@ -64,6 +65,9 @@ def make_classifier_builder(args):
 		elif algo == 'Scikits':
 			classifier_train = ScikitsClassifier.train
 		elif algo == 'GPIBox':
+			if args.senior and 'GPIBox' in args.senior:
+				senior = nltk.data.load("classifiers/" + args.senior)
+				classifier_train_kwargs['senior'] = senior.w
 			classifier_train_kwargs['aggressiveness'] = args.aggressiveness
 			classifier_train_kwargs['passivity'] = args.passivity
 			classifier_train = GPIClassifier.train
