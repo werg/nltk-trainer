@@ -80,7 +80,7 @@ def make_classifier_builder(args):
 			classifier_train = GPIClassifier.train
 		elif algo == 'Weka':
 			classifier_train_kwargs['classifier'] = 'C4.5'
-			#classifier_train_kwargs['model_filename'] = '/tmp/wekarun.model'
+			classifier_train_kwargs['model_filename'] = '/tmp/wekarun.model'
 			def call_train_weka(train_feats, **train_kwargs):
 				return WekaClassifier.train(train_kwargs['model_filename'], train_feats, 'C4.5')
 			classifier_train = call_train_weka
