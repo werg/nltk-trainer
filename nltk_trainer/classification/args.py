@@ -2,12 +2,19 @@ from nltk.classify import DecisionTreeClassifier, MaxentClassifier, NaiveBayesCl
 from nltk_trainer.classification.multi import AvgProbClassifier
 from .gpibox import GPIClassifier
 import nltk.data
+from nltk.classify.weka import WekaClassifier
 
 classifier_choices = ['NaiveBayes', 'DecisionTree', 'Maxent', 'GPIBox'] + MaxentClassifier.ALGORITHMS
 
 try:
 	from .sci import ScikitsClassifier
 	classifier_choices.append('Scikits')
+except ImportError:
+	pass
+	
+try:
+	from nltk.classify.weka import WekaClassifier
+	classifier_choices.append('Weka')
 except ImportError:
 	pass
 
@@ -71,6 +78,10 @@ def make_classifier_builder(args):
 			classifier_train_kwargs['aggressiveness'] = args.aggressiveness
 			classifier_train_kwargs['passivity'] = args.passivity
 			classifier_train = GPIClassifier.train
+		elif algo == 'Weka':
+			classifier_train_kwargs['classifier'] = 'C4.5'
+			classifier_train_kwargs['model_filename'] = '/tmp/wekarun.model'
+			classifier_train = WekaClassifier.train
 		else:
 			if algo != 'Maxent':
 				classifier_train_kwargs['algorithm'] = algo
