@@ -81,7 +81,9 @@ def make_classifier_builder(args):
 		elif algo == 'Weka':
 			classifier_train_kwargs['classifier'] = 'C4.5'
 			#classifier_train_kwargs['model_filename'] = '/tmp/wekarun.model'
-			classifier_train = WekaClassifier.train
+			def call_train_weka(train_feats, **train_kwargs):
+				return WekaClassifier.train(featuresets=train_feats, **train_kwargs)
+			classifier_train = call_train_weka
 		else:
 			if algo != 'Maxent':
 				classifier_train_kwargs['algorithm'] = algo
